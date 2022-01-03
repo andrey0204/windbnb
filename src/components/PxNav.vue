@@ -16,12 +16,12 @@
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;1,100;1,300&display=swap");
 
-* {
+/* * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
   font-family: "Roboto", sans-serif;
-}
+} */
 
 .nav {
   display: flex;
@@ -45,7 +45,7 @@
   padding: 5px;
   height: 45px;
   width: 300px;
-  border-radius: 10px;
+  border-radius: 14px;
   box-shadow: 0px 4px 13px -2px rgb(0, 0, 0,0.2);
 }
 
