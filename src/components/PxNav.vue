@@ -4,14 +4,28 @@
       <img src="@/assets/logo.png" />
     </div>
     <div class="nav-search-container">
-        <div class="nav-search">
-        <span class="nav-span">add location</span>
-        <span class="nav-span">add guests</span>
-        <font-awesome-icon icon="search" />
+        <div class="nav-search" @click="openSearchModal">
+          <span class="nav-span">{{ filterLocation }}</span>
+          <span class="nav-span">{{ filterGuets }}</span>
+          <font-awesome-icon icon="search" />
         </div>
     </div>
   </div>
 </template>
+
+<script>
+import { mapState } from 'vuex'
+export default {
+  computed: {
+    ...mapState(['filterLocation', 'filterGuets'])
+  },
+  methods: {
+    openSearchModal () {
+      this.$store.commit('setShowSearchModal', true)
+    }
+  }
+}
+</script>
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;1,100;1,300&display=swap");
@@ -30,17 +44,16 @@
   align-items: center;
   gap: 30px;
   width: 100%;
-}
-
-.nav-img {
-  margin-left: 20px;
+  position: sticky;
+  z-index: 1;
+  top: 0;
+  padding: 20px 0;
 }
 
 .nav-search {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  margin-right: 20px;
   border: solid 2px black;
   padding: 5px;
   height: 45px;

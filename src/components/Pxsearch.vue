@@ -1,30 +1,30 @@
 <template>
-  <div class="search">
-    <div class="times">
+  <div class="search" :class="{ hidden: !showModal }">
+    <div class="times" @click="closeModal">
       <font-awesome-icon icon="times" />
     </div>
     <div class="search-secondary">
       <div>
         <div class="search-location">
           <span class="text-location">LOCATION</span>
-          <span class="text-add">Add location</span>
+          <span class="text-add">{{ location }}</span>
         </div>
         <div class="search-content">
           <div class="search-list">
             <ul class="list">
-              <li class="list-one">
+              <li class="list-one"  @click="location = Helsinki">
                 <font-awesome-icon icon="map-marker-alt" />
                 <span class="text-one">Helsinki, Finland</span>
               </li>
-              <li class="list-one">
+              <li class="list-one" @click="location = Turku">
                 <font-awesome-icon icon="map-marker-alt" />
                 <span class="text-one">Turku, Finland</span>
               </li>
-              <li class="list-one">
+              <li class="list-one" @click="location = Oulu">
                 <font-awesome-icon icon="map-marker-alt" />
                 <span class="text-one">Oulu, Finland</span>
               </li>
-              <li class="list-one">
+              <li class="list-one" @click="location = Vaasa">
                 <font-awesome-icon icon="map-marker-alt" />
                 <span class="text-one">Vaasa, Finland</span>
               </li>
@@ -35,31 +35,41 @@
       <div>
         <div class="search-guests">
           <span class="text-location">GUESTS</span>
-          <span class="text-add">Add guests</span>
+          <span class="text-add">{{ total }}</span>
         </div>
         <div class="search-capacity">
           <div class="search-number">
             <span class="text-location">Adults</span>
             <span class="text-add">Ages 13 or above</span>
             <div class="input-buttom">
-              <button class="buttom">+</button>
-              <input type="text" class="input" />
-              <button class="buttom">-</button>
+              <button class="buttom" @click="alterCount('num1', 1)">+</button>
+              <input
+                type="text"
+                class="input"
+                v-model.number="num1"
+                v-if="num1 >= 0"
+              />
+              <button class="buttom" @click="alterCount('num1', -1)">-</button>
             </div>
           </div>
           <div class="search-number">
             <span class="text-location">Children</span>
             <span class="text-add">Ages 2-12</span>
             <div class="input-buttom">
-              <button class="buttom">+</button>
-              <input type="text" class="input" />
-              <button class="buttom">-</button>
+              <button class="buttom" @click="alterCount('num', 1)">+</button>
+              <input
+                type="text"
+                class="input"
+                v-model.number="num"
+                v-if="num >= 0"
+              />
+              <button class="buttom" @click="alterCount('num', -1)">-</button>
             </div>
           </div>
         </div>
       </div>
       <div class="search-responsi-icon">
-        <div class="search-icon">
+        <div class="search-icon" @click="applyFilters">
           <font-awesome-icon icon="search" />
           <span class="text-search">search</span>
         </div>
@@ -67,20 +77,86 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  data: function () {
+    return {
+      num: 0,
+      num1: 0,
+      location: 'Add location',
+      Helsinki: "Helsinki, Finland",
+      Turku: "Turku, Finland",
+      Oulu: "Oulu, Finland",
+      Vaasa: "Vaasa, Finland",
+    };
+  },
+  computed: {
+    showModal() {
+      return this.$store.state.showSearchModal;
+    },
+    total() {
+      let total = (this.num + this.num1)
+      if (total) {
+        return total +  ' Guets'
+      }
+      return 'Add Guest'
+    },
+    totalNumber () {
+      return (this.num + this.num1)
+    }
+  },
 
-
+  methods: {
+    closeModal() {
+      this.$store.commit("setShowSearchModal", false);
+    },
+    alterCount(num, add) {
+      if (num === 'num') {
+        this.num += add
+        if (this.num < 0) {
+          this.num = 0
+        }
+      }
+      if (num === 'num1') {
+        this.num1 += add
+        if (this.num1 < 0) {
+          this.num1 = 0
+        }
+      }
+    },
+    applyFilters () {
+      this.$store.commit('setFilters', {
+        filterLocation: this.location,
+        filterGuets: this.total,
+        filterGuetsNumber: this.totalNumber
+      })
+      this.closeModal()
+    }
+  },
+};
+</script>
 
 <style>
 .search {
-  margin-top: 50px;
+  /* margin-top: 50px; */
   /* border: solid 1px rgb(255, 0, 0); */
-  height: 350px;
+  min-height: 350px;
   width: 100%;
   flex-wrap: wrap;
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  background-color: rgb(255, 255, 255);
+  overflow-y: scroll;
+  max-height: 100vh;
+}
+
+.search.hidden {
+  display: none;
 }
 
 .search-secondary {
-  margin-top: 10px;
+  /* margin-top: 10px; */
   display: flex;
   justify-content: space-around;
 }
@@ -155,6 +231,7 @@
 
 .list-one {
   margin-bottom: 25px;
+  cursor: pointer;
 }
 
 .text-one {
@@ -169,7 +246,7 @@
   border-radius: 6px;
   border: solid 1px black;
 }
-.buttom:hover{
+.buttom:hover {
   background-color: black;
   color: aliceblue;
 }
